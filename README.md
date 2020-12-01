@@ -4,7 +4,7 @@ Projects ending in 4 number codes are projects completed for U of Minn CSCI clas
 
 Descriptions / how to run:
 
-kmeans1913: Implements the k-means algorithm to simplify the colors of an image. Uses specialized image format, so examples are included. K = # of colors.
+[kmeans1913](https://github.com/MarcoTab/Portfolio/tree/kmeans1913): Implements the k-means algorithm to simplify the colors of an image. Uses specialized image format, so examples are included. K = # of colors.
             Run run_k_means.py (Python).
             
 evenodd1913: Implements several simple ciphers to learn about polymorphism. Includes simple demonstration of the end product.
