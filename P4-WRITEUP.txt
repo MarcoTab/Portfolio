@@ -138,7 +138,7 @@ int matsquare_VER5(matrix_t mat, matrix_t matsq) {
   return 0;
 }
 
-int matsquare_VER6(matrix_t mat, matrix_t matsq) {
+int matsquare_VER6(matrix_t mat, matrix_t matsq) { <------------------------------------------------------------ FINAL IMPLEMENTATION
   matrix_t transmat;
   matrix_init(&transmat, mat.rows, mat.cols);
   
@@ -280,7 +280,9 @@ TOTAL POINTS: 35 / 35
   (NEW METHOD) Optimization 5: Calculate the transpose and use this to access data even more sequentially, at the cost of using much more memory.
 
   Optimization 6: Transposed matrix + loop unrolling = I'm running out of ideas here, but this is the fastest. Let's be honest I'm not going for extra credit anymore.
-  ^^^^^^^^^^^^^^ Final Version
+  ^^^^^^^^^^^^^^ FINAL IMPLEMENTATION
+
+  Note: I tried to make this run even faster by having multiple 'cur' variables but that made it go even slower, so I don't even know anymore.
 
 
 PROBLEM 2: Timing Search Algorithms
