@@ -23,4 +23,4 @@ Descriptions / how to run:
                Run 'make' then thermo_main (C and AT&T x86_64).
                
 [optims2011](https://github.com/MarcoTab/Portfolio/tree/optims2011): Implements optimizations for the matrix squaring problem. Implements a benchmark for several array search algorithms.
-            Run 'make' then matsquare_benchmark or search_benchmark.
+            Run 'make' then matsquare_benchmark or search_benchmark (C).
