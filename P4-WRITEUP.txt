@@ -1,0 +1,407 @@
+                              ____________
+
+                               P4 WRITEUP
+                              ____________
+
+
+- Name: Marco Tabacman
+- NetID: tabac007
+
+Answer the questions below according to the project specification. Write
+your answers directly in this text file and submit it along with your
+code.
+
+
+PROBLEM 1: matsquare_OPTM()
+===========================
+
+  Do your timing study on csel-keller1250-NN.cselabs.umn.edu
+
+
+(A) Paste Source Code
+~~~~~~~~~~~~~~~~~~~~~
+
+  Paste a copy of your source code for the function `matsquare_OPTM()'
+
+int matsquare_VER1(matrix_t mat, matrix_t matsq) {
+  for(int i = 0; i<mat.rows; i++) {
+    for(int j=0; j<mat.cols; j++){
+      MSET(matsq, i, j, 0);
+    }
+  }
+  for(int i = 0; i<mat.rows; i++) {
+    for(int j=0; j<mat.cols; j++){
+      int lead = MGET(mat,i,j);
+      for (int k = 0; k<mat.rows; k++) {
+        int mjk = MGET(mat, j, k);
+        int cur = MGET(matsq, i, k);
+        int new = cur + mjk*lead;
+        MSET(matsq, i, k, new);
+      }
+    }
+  }
+  return 0;  
+}
+
+int matsquare_VER2(matrix_t mat, matrix_t matsq) {
+  for(int i = 0; i<mat.rows; i++) {
+    for(int k = 0; k<mat.rows; k++) {
+      MSET(matsq, i, k, 0);
+    }
+    for(int j=0; j<mat.cols; j++){
+      int lead = MGET(mat,i,j);
+      for (int k = 0; k<mat.rows; k++) {
+        int mjk = MGET(mat, j, k);
+        int cur = MGET(matsq, i, k);
+        int new = cur + mjk*lead;
+        MSET(matsq, i, k, new);
+      }
+    }
+  }
+  return 0;  
+}
+
+int matsquare_VER3(matrix_t mat, matrix_t matsq) {
+  for(int i = 0; i<mat.rows; i++) {
+    for(int k = 0; k<mat.rows; k++) {
+      MSET(matsq, i, k, 0);
+    }
+    for(int j=0; j<mat.cols; j++){
+      int lead = MGET(mat,i,j);
+      for (int k = 0; k<mat.rows; k++) {
+        int mjk = MGET(mat, j, k);
+        int cur = MGET(matsq, i, k);
+        MSET(matsq, i, k, cur + mjk*lead);
+      }
+    }
+  }
+  return 0;
+}
+
+int matsquare_VER4(matrix_t mat, matrix_t matsq) {
+  for(int i = 0; i<mat.rows; i++) {
+    for(int x = 0; x<mat.rows; x++) {
+      MSET(matsq, i, x, 0);
+    }
+    for(int j=0; j<mat.cols; j++){
+      int lead = MGET(mat,i,j);
+      int k = 0;
+      for (k = 0; k<mat.rows-4; k += 4) {
+        int mjk = MGET(mat, j, k);
+        int cur = MGET(matsq, i, k);
+        MSET(matsq, i, k, cur + mjk*lead);
+        
+        int mjk1 = MGET(mat, j, k+1);
+        int cur1 = MGET(matsq, i, k+1);
+        MSET(matsq, i, k+1, cur1 + mjk1*lead);
+
+        int mjk2 = MGET(mat, j, k+2);
+        int cur2 = MGET(matsq, i, k+2);
+        MSET(matsq, i, k+2, cur2 + mjk2*lead);
+
+        int mjk3 = MGET(mat, j, k+3);
+        int cur3 = MGET(matsq, i, k+3);
+        MSET(matsq, i, k+3, cur3 + mjk3*lead);
+      }
+
+      for(; k < mat.cols; k++) {
+        int mjk = MGET(mat, j, k);
+        int cur = MGET(matsq, i, k);
+        MSET(matsq, i, k, cur + mjk*lead);
+      }
+      
+    }
+  }
+  return 0;
+}
+
+int matsquare_VER5(matrix_t mat, matrix_t matsq) {
+  matrix_t transmat;
+  matrix_init(&transmat, mat.rows, mat.cols);
+  
+  for(int i = 0; i < mat.rows; i++) {
+    for(int j = 0; j < mat.cols; j++) {
+      MSET(transmat, i, j, MGET(mat, j, i));
+    }
+  }
+
+  for(int i = 0; i < mat.rows; i++) {
+    for (int j = 0; j < mat.cols; j++) {
+      int cur = 0;
+      for(int k = 0; k < mat.cols; k++) {
+        cur += MGET(transmat, j, k)*MGET(mat, i, k);
+      }
+      MSET(matsq, i, j, cur);
+    }
+  }
+
+  return 0;
+}
+
+int matsquare_VER6(matrix_t mat, matrix_t matsq) {
+  matrix_t transmat;
+  matrix_init(&transmat, mat.rows, mat.cols);
+  
+  for(int i = 0; i < mat.rows; i++) {
+    for(int j = 0; j < mat.cols; j++) {
+      MSET(transmat, i, j, MGET(mat, j, i));
+    }
+  }
+
+  for(int i = 0; i < mat.rows; i++) {
+    for (int j = 0; j < mat.cols; j++) {
+      int cur = 0;
+      int k = 0;
+      for(k = 0; k < mat.cols-4; k+=4) {
+        cur += MGET(transmat, j, k)*MGET(mat, i, k);
+        cur += MGET(transmat, j, k+1)*MGET(mat, i, k+1);
+        cur += MGET(transmat, j, k+2)*MGET(mat, i, k+2);
+        cur += MGET(transmat, j, k+3)*MGET(mat, i, k+3);
+      }
+      for(; k < mat.cols; k++) {
+        cur += MGET(transmat, j, k)*MGET(mat, i, k);
+      }
+
+      MSET(matsq, i, j, cur);
+    }
+  }
+
+  return 0;
+}
+
+(B) Timing on csel-kh1250-NN
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Paste a copy of the results of running `matsquare_benchmark' on
+  csel-kh1250-NN.cselabs.umn.edu in the space below which shows how your
+  performance optimizations improved on the baseline codes.
+
+V1
+
+==== Matrix Square Benchmark Version 1 ====
+  SIZE       BASE       OPTM  SPDUP   LOG2 FACTOR POINTS 
+   273 3.2830e-02 2.3879e-02   1.37   0.46   1.00   0.46 
+   512 2.5633e-01 1.5423e-01   1.66   0.73   1.88   1.37 
+   722 6.3982e-01 4.3270e-01   1.48   0.56   2.64   1.49 
+   801 8.5533e-01 5.8703e-01   1.46   0.54   2.93   1.59 
+  1024 2.5765e+00 1.2394e+00   2.08   1.06   3.75   3.96 
+  1101 5.2140e+00 1.5381e+00   3.39   1.76   4.03   7.10 
+  1309 1.3812e+01 2.5980e+00   5.32   2.41   4.79  11.56 
+RAW POINTS: 27.54
+TOTAL POINTS: 28 / 35
+
+V2 
+
+==== Matrix Square Benchmark Version 1 ====
+  SIZE       BASE       OPTM  SPDUP   LOG2 FACTOR POINTS 
+   273 3.2519e-02 2.3397e-02   1.39   0.47   1.00   0.47 
+   512 2.5814e-01 1.5334e-01   1.68   0.75   1.88   1.41 
+   722 6.2525e-01 4.2630e-01   1.47   0.55   2.64   1.46 
+   801 8.5405e-01 5.8266e-01   1.47   0.55   2.93   1.62 
+  1024 2.5319e+00 1.2353e+00   2.05   1.04   3.75   3.88 
+  1101 5.2273e+00 1.5112e+00   3.46   1.79   4.03   7.22 
+  1309 1.3830e+01 2.5693e+00   5.38   2.43   4.79  11.64 
+RAW POINTS: 27.71
+TOTAL POINTS: 28 / 35
+
+V3
+
+==== Matrix Square Benchmark Version 1 ====
+  SIZE       BASE       OPTM  SPDUP   LOG2 FACTOR POINTS 
+   273 3.3472e-02 2.3315e-02   1.44   0.52   1.00   0.52 
+   512 2.5966e-01 1.5437e-01   1.68   0.75   1.88   1.41 
+   722 6.7208e-01 4.3040e-01   1.56   0.64   2.64   1.70 
+   801 8.7531e-01 5.8468e-01   1.50   0.58   2.93   1.71 
+  1024 3.1241e+00 1.2364e+00   2.53   1.34   3.75   5.02
+  1101 5.2017e+00 1.5156e+00   3.43   1.78   4.03   7.17 
+  1309 1.3783e+01 2.5504e+00   5.40   2.43   4.79  11.67 
+RAW POINTS: 29.20
+TOTAL POINTS: 29 / 35
+
+V4
+
+==== Matrix Square Benchmark Version 1 ====
+  SIZE       BASE       OPTM  SPDUP   LOG2 FACTOR POINTS 
+   273 3.2648e-02 1.7028e-02   1.92   0.94   1.00   0.94 
+   512 2.5574e-01 1.1007e-01   2.32   1.22   1.88   2.28 
+   722 6.2419e-01 3.0464e-01   2.05   1.03   2.64   2.74 
+   801 8.7364e-01 4.1698e-01   2.10   1.07   2.93   3.13 
+  1024 3.0571e+00 8.7724e-01   3.48   1.80   3.75   6.76 
+  1101 5.1571e+00 1.0854e+00   4.75   2.25   4.03   9.07 
+  1309 1.3881e+01 1.8530e+00   7.49   2.91   4.79  13.93 
+RAW POINTS: 38.84
+TOTAL POINTS: 35 / 35
+
+V5
+
+==== Matrix Square Benchmark Version 1 ====
+  SIZE       BASE       OPTM  SPDUP   LOG2 FACTOR POINTS 
+   273 3.2737e-02 2.2253e-02   1.47   0.56   1.00   0.56 
+   512 2.5764e-01 1.4177e-01   1.82   0.86   1.88   1.62 
+   722 6.2578e-01 3.9565e-01   1.58   0.66   2.64   1.75 
+   801 8.5796e-01 5.3925e-01   1.59   0.67   2.93   1.97 
+  1024 2.5616e+00 1.1121e+00   2.30   1.20   3.75   4.52 
+  1101 5.1698e+00 1.3998e+00   3.69   1.88   4.03   7.60 
+  1309 1.3709e+01 2.3897e+00   5.74   2.52   4.79  12.08 
+RAW POINTS: 30.09
+TOTAL POINTS: 30 / 35
+
+V6 <------------------------------------------------------------ FINAL IMPLEMENTATION
+
+==== Matrix Square Benchmark Version 1 ====
+  SIZE       BASE       OPTM  SPDUP   LOG2 FACTOR POINTS 
+   273 3.2631e-02 1.4110e-02   2.31   1.21   1.00   1.21 
+   512 2.6370e-01 9.2156e-02   2.86   1.52   1.88   2.84 
+   722 6.4348e-01 2.6079e-01   2.47   1.30   2.64   3.45 
+   801 8.7638e-01 3.4795e-01   2.52   1.33   2.93   3.91 
+  1024 3.5396e+00 7.7022e-01   4.60   2.20   3.75   8.25 
+  1101 5.4029e+00 9.4210e-01   5.73   2.52   4.03  10.16 
+  1309 1.4537e+01 1.5196e+00   9.57   3.26   4.79  15.62 
+RAW POINTS: 45.45
+TOTAL POINTS: 35 / 35
+
+(C) Optimizations
+~~~~~~~~~~~~~~~~~
+
+  Describe in some detail the optimizations you used to speed the code
+  up.  THE CODE SHOULD CONTAIN SOME COMMENTS already to describe these
+  but in the section below, describe in English the techniques you used
+  to make the code run faster.  Format your descriptions into discrete
+  chunks such as.
+
+  Optimization 1: Made program access memory more sequentially by using lead multiples and not having to access the same variables many times.
+
+  Optimization 2: Integrated MSETs into the same loop, still one loop that I can't get rid of, not that it's making much of a difference.
+
+  Optimization 3: Cut out the 'new' variable, see if something happens. // I can't figure out why but for some reason sometimes I get 29.4 and sometimes 27.8
+
+  Optimization 4: Use loop unrolling. (4 times for most benefit)
+
+  (NEW METHOD) Optimization 5: Calculate the transpose and use this to access data even more sequentially, at the cost of using much more memory.
+
+  Optimization 6: Transposed matrix + loop unrolling = I'm running out of ideas here, but this is the fastest. Let's be honest I'm not going for extra credit anymore.
+  ^^^^^^^^^^^^^^ Final Version
+
+
+PROBLEM 2: Timing Search Algorithms
+===================================
+
+  Do your timing study on csel-kh1250-NN.cselabs.umn.edu. In most cases,
+  report times larger than 1e-03 seconds as times shorter than this are
+  unreliable. Run searches for more repetitions to lengthen run times.
+
+
+(A) Min Size for Algorithmic Differences
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Determine the size of input array does one start to see a measurable
+  difference in the performance of the linear and logarithmic
+  algorithms.  Produce a timing table which includes all algorithms
+  which clearly demonstrates an uptick in the times associated with some
+  while others remain much lower.  Identify what size this appears to be
+  a occur.
+
+  LENGTH SEARCHES      array       list     binary       tree
+      32   640000 3.9620e-03 5.3310e-03 2.1730e-03 1.6120e-03
+      64  1280000 1.6016e-02 2.8933e-02 4.8580e-03 3.5520e-03
+     128  2560000 5.3603e-02 1.1136e-01 1.7695e-02 7.9630e-03
+     256  5120000 1.8932e-01 4.3289e-01 4.1081e-02 2.0181e-02
+     512 10240000 6.9471e-01 1.7073e+00 1.3908e-01 1.1461e-01
+    1024 20480000 2.6500e+00 8.3766e+00 2.8450e-01 2.6496e-01
+
+    The size at which a noticeable difference appears seems to be around 64, where there is almost an 
+    order of magnitude in the difference of the speeds of the linear vs logarithmic algorithms
+
+
+(B) Linear Search in List vs Array
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Determine whether the linear array and linked list search remain
+  approximately at the same performance level as size increases to large
+  data or whether one begins to become favorable over other. Determine
+  the approximate size at which this divergence becomes obvious. Discuss
+  reasons WHY this difference arises.
+
+  They don't. As we can clearly see from the last table, the diference between a linked list search and an array search
+  become obvious at around 64 ints as well, where the list takes twice as long as the array. 
+  This gap only gets larger with bigger sizes such as 1024 where the linked list takes ~3 times as long.
+
+  I think that this difference arises from the fact that linked lists aren't always created in contiguous spaces of memory because
+  of manual memory allocation. Thus, the array traveses memory much more sequentially than a linked list.
+
+
+(C) Binary Search in Tree vs Array
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Compare the binary array search and binary tree search on small to
+  very large arrays. Determine if there is a size at which the
+  performance of these two begins to diverge. If so, describe why this
+  might be happening based on your understanding of the data structures
+  and the memory system. If not, describe why you believe there is
+  little performance difference between the two.
+
+  I don't believe there is a large difference in performance between the two, though trees seem to be marginally faster for some reason (+7%ish).
+  I think that the lack of difference between the algorithms is given by the fact that neither is accessing memory sequentially.
+
+  The tree is manually allocated, making sequential allocation very improbable.
+  (I believe that if a tree somehow was able to be 100% sequentially allocated then it could improve performance, 
+  but only for one specific path of the tree and none of the others, so kinda useless anyways)
+
+  The binary search by its very nature accesses memory in a non sequential fashion. 
+  (looks at middle value, goes to the middle of left or right half, etc)
+  
+  
+  This rate seems to hold all the way up to a size of 2^16 (at least)
+
+  Table I used as a reference for this question btw:
+
+    LENGTH SEARCHES     binary       tree
+      32   640000 2.1380e-03 1.7190e-03
+      64  1280000 4.6870e-03 3.6330e-03
+     128  2560000 1.7033e-02 8.2640e-03
+     256  5120000 4.1442e-02 1.9198e-02
+     512 10240000 1.4019e-01 1.0118e-01
+    1024 20480000 2.8613e-01 2.6439e-01
+    2048 40960000 6.9574e-01 6.2789e-01
+    4096 81920000 1.5307e+00 1.4182e+00
+    8192 163840000 3.3086e+00 3.0437e+00
+   16384 327680000 6.7642e+00 6.2755e+00
+   32768 655360000 1.3967e+01 1.3722e+01
+   65536 1310720000 2.8889e+01 2.6790e+01
+
+
+(D) Caching Effects on Algorithms
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  It is commonly believed that memory systems that feature a Cache will
+  lead to arrays performing faster than linked structures such as Linked
+  Lists and Binary Search Trees. Describe whether your timings confirm
+  or refute this belief.  Address both types of algorithms in your
+  answer:
+
+  - What effects does Cache have on Linear Search in arrays and lists
+    and why?
+  - What effects does Cache have on Binary Search in arrays and trees
+    and why?
+
+    Like I said before, I believe that cache is the reason that linear array search is faster than linear list search, and the timings back this up.
+    It is not the case however that the linear array search is faster than the binary tree, since the huge algorithmic improvements the latter makes
+    are more than enough to overwhelm the shortcomings of non-sequential memory access.
+
+    As for the binary array search, I already discussed this but cache doesn't help it since its memory access pattern is non-sequential, but much like the BST
+    the algorithm is so superior that it blows linear array search out of the water.
+    
+  
+
+
+
+(E) OPTIONAL MAKEUP CREDIT
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  If you decided to make use of a table of function pointers/structs
+  which is worth makeup credit, describe your basic design for this
+  below.
+
+  ####################### YOUR ANSWER HERE #########################
+
+  ##################################################################
