@@ -144,7 +144,7 @@ int matsquare_VER6(matrix_t mat, matrix_t matsq) {
       int cur = 0;                                       // Keep a running count
       int k = 0;
       for(k = 0; k < mat.cols-4; k+=4) {
-        cur += MGET(transmat, j, k)*MGET(mat, i, k);     // Do the thing, but 4 times so that we unroll the loop
+        cur += MGET(transmat, j, k)*MGET(mat, i, k);     // Do the thing, but unroll the loop
         cur += MGET(transmat, j, k+1)*MGET(mat, i, k+1);
         cur += MGET(transmat, j, k+2)*MGET(mat, i, k+2);
         cur += MGET(transmat, j, k+3)*MGET(mat, i, k+3);
@@ -171,5 +171,5 @@ int matsquare_OPTM(matrix_t mat, matrix_t matsq) {
  
 
   // Call to some version of optimized code
-  return matsquare_VER6(mat, matsq);
+  return matsquare_VER7(mat, matsq);
 }

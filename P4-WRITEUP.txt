@@ -169,6 +169,38 @@ int matsquare_VER6(matrix_t mat, matrix_t matsq) { <----------------------------
   return 0;
 }
 
+int matsquare_VER7(matrix_t mat, matrix_t matsq) {
+  matrix_t transmat;
+  matrix_init(&transmat, mat.rows, mat.cols); // Initialize the transpose matrix
+  
+  for(int i = 0; i < mat.rows; i++) {
+    for(int x = 0; x < mat.cols; x++) {
+      MSET(transmat, i, x, MGET(mat, x, i)); // Fill transpose matrix with required values
+    }
+  }
+
+  for(int i = 0; i < mat.rows; i++) {
+    for (int j = 0; j < mat.cols; j++) {
+      int cur0 = 0, cur1=0, cur2=0, cur3=0;                                       // Keep a running count
+      int k = 0;
+      for(k = 0; k < mat.cols-4; k+=4) {
+        cur0 += MGET(transmat, j, k)*MGET(mat, i, k);     // Do the thing, but unroll the loop
+        cur1 += MGET(transmat, j, k+1)*MGET(mat, i, k+1);
+        cur2 += MGET(transmat, j, k+2)*MGET(mat, i, k+2);
+        cur3 += MGET(transmat, j, k+3)*MGET(mat, i, k+3);
+      }
+      for(; k < mat.cols; k++) {
+        cur0 += MGET(transmat, j, k)*MGET(mat, i, k);     // Finish off the stragglers
+      }
+
+      MSET(matsq, i, j, cur0+cur1+cur2+cur3);   // Place cur in the correct place in the return matrix
+    }
+  }
+
+  matrix_free_data(&transmat); // free transpose matrix to avoid memory errors
+  return 0;
+}
+
 (B) Timing on csel-kh1250-NN
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -282,7 +314,8 @@ TOTAL POINTS: 35 / 35
   Optimization 6: Transposed matrix + loop unrolling = I'm running out of ideas here, but this is the fastest. Let's be honest I'm not going for extra credit anymore.
   ^^^^^^^^^^^^^^ FINAL IMPLEMENTATION
 
-  Note: I tried to make this run even faster by having multiple 'cur' variables but that made it go even slower, so I don't even know anymore.
+  Note: I tried to make this run even faster by having multiple 'cur' variables but that made almost no difference (if anything it made it more stable, but it was slower than the fastest the opt above made) 
+
 
 
 PROBLEM 2: Timing Search Algorithms

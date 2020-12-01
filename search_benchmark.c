@@ -21,7 +21,7 @@ int main(int argc, char *argv[]){
     printf("  t : Binary Tree Search\n");
     printf("  (default all)\n");
   }
-  else if (argc < 5) {
+  else if (argc < 5) {  // If no tests have been specified, run all tests.
     lin_search = 1;
     link_search = 1;
     bin_search = 1;
@@ -29,7 +29,8 @@ int main(int argc, char *argv[]){
 
   } else {
     char *algs_string = argv[4];
-    for (int i = 0; i < strlen(algs_string); i++) {
+
+    for (int i = 0; i < strlen(algs_string); i++) {     // Figure out which tests we have to run
       if (algs_string[i] == 'a'){
         lin_search = 1;
       } else if (algs_string[i] == 'l'){
@@ -42,7 +43,7 @@ int main(int argc, char *argv[]){
     }
   }
 
-  int minpow = atoi(argv[1]);
+  int minpow = atoi(argv[1]); // get min and max powers, number of repetitions
   int maxpow = atoi(argv[2]);
   int repeats = atoi(argv[3]);
 
@@ -56,7 +57,7 @@ int main(int argc, char *argv[]){
 
   printf("%8s %8s","LENGTH","SEARCHES");
 
-                      //vvvvvvvvvvvvvv-------------- Total # of tests to perform
+                      //vvvvvvvvvvvvvvvvvvv-------------- Total # of tests to perform
   for (int i = -1; i < (maxpow - minpow + 1); i++) {
     if (i >= 0) {
       printf("%8d %8d", curlen, 2*curlen*repeats);
@@ -124,7 +125,7 @@ int main(int argc, char *argv[]){
       if (i<0) {
         printf("%11s", "tree");
       } else {
-        bst_t *bench = make_evens_tree(curlen);
+        bst_t *bench = make_evens_tree(curlen);                          // Init sorted binary tree
         begin = clock();                                                 // start the clock
         for (int j = 0; j < repeats; j++) {
           for (int k = 0; k < curlen; k++) {
