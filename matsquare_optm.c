@@ -171,5 +171,5 @@ int matsquare_OPTM(matrix_t mat, matrix_t matsq) {
  
 
   // Call to some version of optimized code
-  return matsquare_VER7(mat, matsq);
+  return matsquare_VER6(mat, matsq);
 }
