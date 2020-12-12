@@ -1,0 +1,16 @@
+Symbol Table
+- 528 bytes offset from start of file
+- 240 bytes total size
+- 24 bytes per entry
+- 10 entries
+[idx]      TYPE SIZE NAME
+[  0]:   NOTYPE    0 <NONE>
+[  1]:     FILE    0 coins_funcs.c
+[  2]:  SECTION    0 <NONE>
+[  3]:  SECTION    0 <NONE>
+[  4]:  SECTION    0 <NONE>
+[  5]:  SECTION    0 <NONE>
+[  6]:  SECTION    0 <NONE>
+[  7]:  SECTION    0 <NONE>
+[  8]:     FUNC  267 set_coins
+[  9]:     FUNC   91 total_coins

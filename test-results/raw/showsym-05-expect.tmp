@@ -1,0 +1,23 @@
+Symbol Table
+- 680 bytes offset from start of file
+- 408 bytes total size
+- 24 bytes per entry
+- 17 entries
+[idx]      TYPE SIZE NAME
+[  0]:   NOTYPE    0 <NONE>
+[  1]:     FILE    0 coins_main.c
+[  2]:  SECTION    0 <NONE>
+[  3]:  SECTION    0 <NONE>
+[  4]:  SECTION    0 <NONE>
+[  5]:  SECTION    0 <NONE>
+[  6]:  SECTION    0 <NONE>
+[  7]:  SECTION    0 <NONE>
+[  8]:  SECTION    0 <NONE>
+[  9]:     FUNC  353 main
+[ 10]:   NOTYPE    0 _GLOBAL_OFFSET_TABLE_
+[ 11]:   NOTYPE    0 printf
+[ 12]:   NOTYPE    0 puts
+[ 13]:   NOTYPE    0 atoi
+[ 14]:   NOTYPE    0 set_coins
+[ 15]:   NOTYPE    0 total_coins
+[ 16]:   NOTYPE    0 __stack_chk_fail
