@@ -50,10 +50,10 @@ int main(int argc, char *argv[]){
   }
                         
   // Open file descriptor and set up memory map for objfile_name
-  int fd = open(objfile_name, O_RDONLY);    // Opening a file descriptor
+  int fd = open(objfile_name, O_RDONLY);    // File descriptor of the input file
   struct stat sizer;                        // Sizer used to get size of file (in bytes)
   fstat(fd, &sizer);
-  int size = sizer.st_size;                 // size of the file to be able to mmap
+  int size = sizer.st_size;                 // Size of the file to mmap
 
   char *file_top = mmap(NULL, size, PROT_READ, MAP_SHARED, fd, 0);   // Map the file in memory and assign to a pointer, call it the file top.
 
@@ -90,15 +90,15 @@ int main(int argc, char *argv[]){
   // String table (e_shstrndx). These fields are from the ELF File
   // Header.
 
-  Elf64_Off shoff = ehdr -> e_shoff;        // Get the section header array offset
-  Elf64_Half shnum = ehdr -> e_shnum;       // get the number of sections
-  Elf64_Half shstrndx = ehdr -> e_shstrndx; // get the index of the section header string table
+  Elf64_Off shoff = ehdr -> e_shoff;        // section header array offset
+  Elf64_Half shnum = ehdr -> e_shnum;       // number of sections
+  Elf64_Half shstrndx = ehdr -> e_shstrndx; // index of the section header string table
 
   // Set up a pointer to the array of section headers. Use the section
   // header string table index to find its byte position in the file
   // and set up a pointer to it.
   Elf64_Shdr *sec_hdrs = (Elf64_Shdr *) PTR_PLUS_BYTES(file_top, shoff); // Points to the beginning of the sh array.
-  char *sec_names = (char *) PTR_PLUS_BYTES(file_top, sec_hdrs[shstrndx].sh_offset);     // points to the beginning of the section header string table.
+  char *sec_names = (char *) PTR_PLUS_BYTES(file_top, sec_hdrs[shstrndx].sh_offset);     // Points to the beginning of the section header string table.
   
 
   // Search the Section Header Array for the secion with name .symtab
@@ -142,9 +142,9 @@ int main(int argc, char *argv[]){
   printf("- %ld bytes offset from start of file\n", symtab_off);
   printf("- %ld bytes total size\n", symtab_size);
   printf("- %ld bytes per entry\n", symtab_entsize);
-  long symtab_num;
+  long symtab_num;  // Contains the number of symbols
 
-  if (symtab_entsize != 0) {symtab_num = symtab_size / symtab_entsize;}
+  if (symtab_entsize != 0) {symtab_num = symtab_size / symtab_entsize;} // Calculate symtab_num
   else {symtab_num = 0;}
   
   printf("- %ld entries\n", symtab_num);
